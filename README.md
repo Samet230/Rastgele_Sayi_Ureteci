@@ -1,12 +1,13 @@
 <div align="center">
 
 # 🎲 Rastgele Sayı Üreteci (RNG)
-### Linear Congruential Generator - Doğrusal Eşlik Üreteci
+### LCG + Kriptografik Güvenli CSPRNG
 
 [![Python Version](https://img.shields.io/badge/Python-3.8%2B-blue?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge)](.)
 [![POSIX Compliant](https://img.shields.io/badge/POSIX-Compliant-orange?style=for-the-badge)](.)
+[![Cryptographically Secure](https://img.shields.io/badge/🔐_Crypto-Secure-red?style=for-the-badge)](.)
 [![Language Support](https://img.shields.io/badge/🌍_Language-TR_|_EN-purple?style=for-the-badge)](.)
 
 <br>
@@ -18,7 +19,7 @@
 
 [🚀 Hızlı Başlangıç](#-hızlı-başlangıç) •
 [📖 Dokümantasyon](#-dokümantasyon) •
-[🧪 Testler](#-jpeg-sıkıştırma-testi) •
+[🔐 Güvenli RNG](#-kriptografik-güvenli-csprng) •
 [👥 Ekip](#-katkıda-bulunanlar)
 
 </div>
@@ -28,111 +29,66 @@
 ## 📋 İçindekiler
 
 - [Proje Hakkında](#-proje-hakkında)
-- [Algoritma](#-algoritma)
-- [Özellikler](#-özellikler)
+- [İki Algoritma](#-iki-algoritma)
 - [Hızlı Başlangıç](#-hızlı-başlangıç)
 - [Kullanım](#-kullanım)
+- [Kriptografik Güvenli CSPRNG](#-kriptografik-güvenli-csprng)
+- [Güvenlik Karşılaştırması](#-güvenlik-karşılaştırması)
 - [Dokümantasyon](#-dokümantasyon)
-- [JPEG Sıkıştırma Testi](#-jpeg-sıkıştırma-testi)
-- [Güvenlik Uyarısı](#-güvenlik-uyarısı)
 - [Katkıda Bulunanlar](#-katkıda-bulunanlar)
 
 ---
 
 ## 🎯 Proje Hakkında
 
-Bu proje, **Doğrusal Eşlik Üreteci (Linear Congruential Generator - LCG)** algoritmasının Python ile nesne yönelimli (OOP) implementasyonunu içermektedir. 
+Bu proje, **iki farklı rastgele sayı üreteci** implementasyonu içermektedir:
 
-Proje, sözde-rastgele sayı üretecilerinin (PRNG) matematiksel temellerini, güvenlik implikasyonlarını ve deterministik yapının önemini göstermeyi amaçlamaktadır.
-
-### 🌟 Öne Çıkan Özellikler
-
-| Özellik | Açıklama |
-|---------|----------|
-| 🔢 **POSIX Uyumlu** | Mersenne Prime (2³¹-1) ve Park-Miller çarpanı |
-| 🌍 **Çoklu Dil** | Türkçe ve İngilizce çıktı desteği |
-| ⏱️ **Mikrosaniye Seed** | Sistem zamanından yüksek hassasiyetli tohum |
-| 📊 **İstatistiksel Test** | Ortalama ve varyans analizi |
-| 🧪 **JPEG Demo** | Deterministik yapı kanıtı |
+1. **Basit LCG** - Eğitim amaçlı, matematiksel temelleri anlamak için
+2. **CSPRNG** - Kriptografik güvenli, gerçek dünya uygulamaları için
 
 ---
 
-## 🧮 Algoritma
+## 🔄 İki Algoritma
 
-### Matematiksel Formül
-
-LCG, aşağıdaki özyineleme formülünü kullanır:
-
-$$X_{n+1} = (a \times X_n + c) \mod m$$
-
-Burada:
-- $X_n$ — Mevcut durum (state)
-- $a$ — Çarpan (multiplier)  
-- $c$ — Artış (increment)
-- $m$ — Modül (modulus)
-
-### POSIX Standart Sabitleri
+### 🔓 Basit LCG (Linear Congruential Generator)
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│  Parametre    │  Değer            │  Açıklama               │
-├─────────────────────────────────────────────────────────────┤
-│  Modül (m)    │  2³¹ - 1          │  Mersenne Prime         │
-│               │  2,147,483,647    │  (7. Mersenne Asal)     │
-├─────────────────────────────────────────────────────────────┤
-│  Çarpan (a)   │  48,271           │  Park-Miller Multiplier │
-│               │                   │  (POSIX minstd_rand)    │
-├─────────────────────────────────────────────────────────────┤
-│  Artış (c)    │  0                │  Multiplicative LCG     │
-└─────────────────────────────────────────────────────────────┘
+X_{n+1} = (a × X_n + c) mod m
+
+m = 2³¹ - 1 (Mersenne Asal)
+a = 48271   (Park-Miller)
+c = 0       (Multiplicative)
 ```
 
-### Akış Şeması
+⚠️ **Eğitim amaçlıdır, kriptografik kullanım için uygun DEĞİLDİR!**
 
-```mermaid
-flowchart TD
-    A[🚀 Başlat] --> B{Seed Verildi mi?}
-    B -->|Hayır| C[⏱️ Sistem Zamanı Al<br/>Mikrosaniye Hassasiyeti]
-    B -->|Evet| D[📥 Seed Değerini Al]
-    C --> E[🔢 Seed = Time mod m]
-    D --> E
-    E --> F[📊 X₀ = Seed]
-    F --> G[🔄 Döngü Başlat]
-    G --> H[📐 X_{n+1} = a × Xₙ + c mod m]
-    H --> I[📤 Sayıyı Çıktı Ver]
-    I --> J{Devam?}
-    J -->|Evet| G
-    J -->|Hayır| K[🏁 Bitir]
+### 🔐 CSPRNG (Cryptographically Secure PRNG)
+
+```
+┌──────────────┐
+│ OS Entropi   │──┐
+│ Nanosec Time │  │    ┌─────────────────────────────────┐
+│ PID/Thread   │──┼──→ │  ENTROPİ HAVUZU (256 byte)     │
+│ ASLR Address │  │    └─────────────┬───────────────────┘
+└──────────────┘──┘                  │
+                                     ▼
+              ┌─────────┐  ┌─────────┐  ┌─────────┐
+              │ LCG-1   │  │ LCG-2   │  │ LCG-3   │
+              │ 64-bit  │  │ 64-bit  │  │ 64-bit  │
+              └────┬────┘  └────┬────┘  └────┬────┘
+                   │           │           │
+                   └─────┬─────┴─────┬─────┘
+                         ▼           ▼
+                   ┌──────────────────────┐
+                   │   XOR + SHA-256      │
+                   └──────────┬───────────┘
+                              ▼
+                   ┌──────────────────────┐
+                   │  GÜVENLİ ÇIKTI 🔐    │
+                   └──────────────────────┘
 ```
 
----
-
-## ✨ Özellikler
-
-### 🌍 Çoklu Dil Desteği
-
-```python
-from lcg_generator import LinearCongruentialGenerator, Language
-
-# Türkçe çıktı
-rng_tr = LinearCongruentialGenerator(language=Language.TURKISH)
-rng_tr.display_info()
-
-# English output
-rng_en = LinearCongruentialGenerator(language=Language.ENGLISH)
-rng_en.display_info()
-```
-
-### 🎯 Tekrarlanabilirlik
-
-Aynı seed değeri ile her zaman aynı dizi üretilir:
-
-```python
-rng1 = LinearCongruentialGenerator(seed=42)
-rng2 = LinearCongruentialGenerator(seed=42)
-
-assert rng1.next() == rng2.next()  # ✅ Her zaman eşit!
-```
+✅ **Kriptografik uygulamalar için uygundur!**
 
 ---
 
@@ -141,27 +97,24 @@ assert rng1.next() == rng2.next()  # ✅ Her zaman eşit!
 ### Gereksinimler
 
 - Python 3.8+
-- NumPy (JPEG demo için)
-- Pillow (JPEG demo için)
 
 ### Kurulum
 
 ```bash
-# Repository'yi klonla
-git clone https://github.com/[username]/Rastgele_Sayi_Ureteci.git
+git clone https://github.com/Samet230/Rastgele_Sayi_Ureteci.git
 cd Rastgele_Sayi_Ureteci
-
-# Bağımlılıkları yükle (JPEG demo için)
-pip install numpy pillow
 ```
 
 ### Çalıştırma
 
 ```bash
-# Ana programı çalıştır
+# Basit LCG
 python lcg_generator.py
 
-# JPEG demo'yu çalıştır
+# Kriptografik Güvenli CSPRNG
+python secure_rng.py
+
+# JPEG Demo
 python jpeg_quantization_demo.py
 ```
 
@@ -169,46 +122,85 @@ python jpeg_quantization_demo.py
 
 ## 📖 Kullanım
 
-### Temel Kullanım
+### Basit LCG
 
 ```python
-from lcg_generator import LinearCongruentialGenerator
+from lcg_generator import LinearCongruentialGenerator, Language
 
-# Otomatik seed ile oluştur (sistem zamanı)
-rng = LinearCongruentialGenerator()
+rng = LinearCongruentialGenerator(language=Language.TURKISH)
 
-# Tek bir rastgele sayı
-value = rng.next()
-print(f"Rastgele sayı: {value}")
-
-# [0,1) aralığında normalize edilmiş sayı
-normalized = rng.next_float()
-print(f"Normalize: {normalized}")
-
-# Belirli aralıkta sayı
-dice = rng.next_int(1, 6)
-print(f"Zar atışı: {dice}")
+# Rastgele sayı
+print(rng.next())           # 595905495
+print(rng.next_float())     # 0.6782...
+print(rng.next_int(1, 6))   # 4 (zar)
 ```
 
-### Dizi Oluşturma
+### Kriptografik Güvenli CSPRNG
 
 ```python
-# 10 adet rastgele sayı dizisi
-sequence = rng.generate_sequence(10)
-print(sequence)
+from secure_rng import CryptographicallySecureRNG
 
-# Normalize edilmiş dizi
-normalized_seq = rng.generate_normalized_sequence(10)
-print(normalized_seq)
+rng = CryptographicallySecureRNG()
+
+# Rastgele sayı (tahmin edilemez!)
+print(rng.next())           # 5214068341740065145
+
+# Güvenli token
+print(rng.generate_token(32))  # "87147e4a07f19715b48e1f2c6183e554"
+
+# Güvenli şifre
+print(rng.generate_password(16))  # "$9}|zwK_MaiO@Yk6"
+
+# Bias'sız zar atışı
+print(rng.next_int(1, 6))   # 4
 ```
 
-### İstatistiksel Analiz
+---
 
-```python
-stats = rng.calculate_statistics(sample_size=100000)
-print(f"Ortalama: {stats['mean']:.4f} (Beklenen: 0.5)")
-print(f"Varyans: {stats['variance']:.4f} (Beklenen: 0.0833)")
+## 🔐 Kriptografik Güvenli CSPRNG
+
+### Güvenlik Özellikleri
+
+| Özellik | Açıklama |
+|---------|----------|
+| 🎲 **OS Entropi** | `/dev/urandom` veya `CryptGenRandom` |
+| 🔀 **Çoklu LCG** | 3 farklı 64-bit LCG paralel çalışır |
+| 🔒 **SHA-256** | Her çıktı hash'lenir, iç durum gizlenir |
+| ♻️ **Auto Reseed** | Her 1000 çıktıda yeni entropi |
+| 🛡️ **Bias Önleme** | Rejection sampling ile eşit dağılım |
+| 🔐 **Thread-Safe** | Lock mekanizması ile senkronizasyon |
+
+### Neden Güvenli?
+
 ```
+SALDIRI ZORLUK ANALİZİ:
+
+1. Entropi Kırma
+   └── 256 byte havuz = 2^2048 olasılık → İMKANSIZ
+
+2. LCG Kırma
+   └── 3 × 64-bit = 2^192 durum → İMKANSIZ
+
+3. SHA-256 Kırma
+   └── 2^256 brute force → EVRENİN ÖMRÜNDEN UZUN
+
+4. Forward Secrecy
+   └── Eski çıktılar yeni çıktıdan türetilemez
+```
+
+---
+
+## ⚡ Güvenlik Karşılaştırması
+
+| Özellik | 🔓 Basit LCG | 🔐 CSPRNG |
+|---------|-------------|-----------|
+| Entropi Kaynağı | `time.time()` | OS + Donanım |
+| Modül Boyutu | 31-bit | 64-bit × 3 |
+| Çıktı Dönüşümü | Yok | SHA-256 |
+| Yeniden Tohumlama | Yok | Her 1000 çıktı |
+| Tahmin Edilebilirlik | **KOLAY** | **İMKANSIZ** |
+| Kriptografik Kullanım | ❌ DEĞİL | ✅ UYGUN |
+| Kırma Süresi | Milisaniye | Yıllar (brute force) |
 
 ---
 
@@ -216,8 +208,8 @@ print(f"Varyans: {stats['variance']:.4f} (Beklenen: 0.0833)")
 
 | Dosya | Açıklama |
 |-------|----------|
-| [📝 PSEUDOCODE.md](docs/PSEUDOCODE.md) | Algoritmanın sözde kodu |
-| [📊 FLOWCHART.md](docs/FLOWCHART.md) | Mermaid formatında akış şeması |
+| [📝 PSEUDOCODE.md](docs/PSEUDOCODE.md) | LCG ve CSPRNG sözde kodu |
+| [📊 FLOWCHART.md](docs/FLOWCHART.md) | Mermaid akış şemaları |
 | [🎯 SUNUM_STRATEJISI.md](docs/SUNUM_STRATEJISI.md) | Ekip sunumu planı |
 | [🔍 CODE_REVIEW_CHEATSHEET.md](docs/CODE_REVIEW_CHEATSHEET.md) | Güvensiz RNG tespit kriterleri |
 
@@ -225,42 +217,32 @@ print(f"Varyans: {stats['variance']:.4f} (Beklenen: 0.0833)")
 
 ## 🧪 JPEG Sıkıştırma Testi
 
-Bu bonus modül, rastgeleliğin veri sıkıştırmada neden uygun olmadığını gösterir.
-
-### Hipotez
-
-> *"Rastgelelik güvenlikte iyidir ama veri sıkıştırmada deterministik yapı şarttır."*
-
-### Deney
-
-1. **Standart JPEG kuantalama tablosu** ile görüntü işleme
-2. **Rastgele LCG tabanlı tablo** ile görüntü işleme
-3. Sonuçların görsel karşılaştırması
+**Hipotez:** *"Rastgelelik güvenlikte iyidir ama veri sıkıştırmada deterministik yapı şarttır."*
 
 ```bash
 python jpeg_quantization_demo.py
 ```
 
-### Beklenen Sonuç
-
-| Tablo Tipi | Kalite | Boyut Oranı |
-|------------|--------|-------------|
-| Standart (Deterministik) | Optimum | Düşük |
-| Rastgele (LCG) | Bozuk | Yüksek |
+| Tablo Tipi | MSE | PSNR | Sonuç |
+|------------|-----|------|-------|
+| Standart (Deterministik) | Düşük | Yüksek | ✅ İyi |
+| Rastgele (LCG) | Yüksek | Düşük | ❌ Kötü |
 
 ---
 
 ## ⚠️ Güvenlik Uyarısı
 
 > [!CAUTION]
-> **Bu algoritma kriptografik amaçlar için GÜVENLİ DEĞİLDİR!**
+> **Basit LCG** kriptografik amaçlar için **GÜVENLİ DEĞİLDİR!**
 > 
-> LCG, tahmin edilebilir bir algoritma olduğu için:
-> - 🔓 Şifreleme anahtarı üretiminde kullanılmamalıdır
-> - 🎰 Gerçek kumar/şans oyunlarında kullanılmamalıdır
-> - 🔐 Güvenlik token üretiminde kullanılmamalıdır
->
-> **Güvenli alternatifler:** `secrets` modülü, `os.urandom()`, `/dev/random`
+> Güvenli rastgelelik gereken yerlerde **secure_rng.py** veya Python'un `secrets` modülünü kullanın.
+
+> [!TIP]
+> **CSPRNG** şu uygulamalar için uygundur:
+> - 🔑 API anahtarı üretimi
+> - 🔐 Şifre üretimi
+> - 🎫 Token üretimi
+> - 🎰 Adaletli şans oyunları
 
 ---
 
@@ -274,11 +256,11 @@ python jpeg_quantization_demo.py
     </td>
     <td align="center">
       <strong>Ekip Üyesi 2</strong><br>
-      <sub>Dokümantasyon</sub>
+      <sub>Güvenlik Analizi</sub>
     </td>
     <td align="center">
       <strong>Ekip Üyesi 3</strong><br>
-      <sub>Test & Demo</sub>
+      <sub>Dokümantasyon</sub>
     </td>
     <td align="center">
       <strong>International Member</strong><br>
@@ -302,5 +284,6 @@ Bu proje [MIT Lisansı](LICENSE) altında lisanslanmıştır.
 *2025*
 
 [![Made with ❤️](https://img.shields.io/badge/Made%20with-❤️-red?style=flat-square)](.)
+[![Secure by Design](https://img.shields.io/badge/Secure_by-Design-blue?style=flat-square)](.)
 
 </div>

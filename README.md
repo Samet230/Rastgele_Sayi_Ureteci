@@ -246,28 +246,6 @@ python jpeg_quantization_demo.py
 
 ---
 
-## 👥 Katkıda Bulunanlar
-
-<table>
-  <tr>
-    <td align="center">
-      <strong>Ekip Üyesi 1</strong><br>
-      <sub>Algoritma Geliştirme</sub>
-    </td>
-    <td align="center">
-      <strong>Ekip Üyesi 2</strong><br>
-      <sub>Güvenlik Analizi</sub>
-    </td>
-    <td align="center">
-      <strong>Ekip Üyesi 3</strong><br>
-      <sub>Dokümantasyon</sub>
-    </td>
-    <td align="center">
-      <strong>International Member</strong><br>
-      <sub>🌍 Global Accessibility</sub>
-    </td>
-  </tr>
-</table>
 
 ---
 
